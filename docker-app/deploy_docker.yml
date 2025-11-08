@@ -1,0 +1,22 @@
+---
+- name: Deploy Docker container on EC2
+  hosts: webserver
+  become: true
+
+  tasks:
+    - name: Copy application files to EC2
+      ansible.builtin.copy:
+        src: .
+        dest: /home/ubuntu/docker-app
+        owner: ubuntu
+        group: ubuntu
+        mode: 0755
+
+    - name: Build Docker image
+      ansible.builtin.shell: |
+        cd /home/ubuntu/docker-app
+        docker build -t devapriya-webapp .
+
+    - name: Run Docker container
+      ansible.builtin.shell: |
+        docker run -d -p 80:80 devapriya-webapp
